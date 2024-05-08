@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>NiceCode</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <style>
+        /* Style personnalisé pour CodeMirror */
+        .CodeMirror {
+            height: 650px; 
+            font-size: 14px; 
+            border: 1px solid #2986cc;
+        }
+        h1 {
+            color: #2986cc;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/lucario.min.css">
+</head>
+<body>
+    <h1>N i c e C o d e</h1>
+    <select id="languageSelector" onchange="changeModeAndExtension()">
+        <option value="htmlmixed|.html">HTML</option>
+        <option value="javascript|.js">JavaScript</option>
+        <option value="python|.py">Python</option>
+        <option value="php|.php">PHP</option>
+        <option value="css|.css">CSS</option>
+    </select>
+    <textarea id="myCodeEditor"></textarea>
+    <input type="text" id="fileName" placeholder="Nom du fichier" value="saved_code">
+    <button onclick="saveCode()">Sauvegarder le Code</button>
+    
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("myCodeEditor"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        theme: "lucario"
+    });
+
+    var localStorageKey = "NiceCodeEditor_code"; // Clé unique pour le localStorage
+
+    // Chargement de la page
+    window.onload = function() {
+        if (localStorage.getItem(localStorageKey)) {
+            editor.setValue(localStorage.getItem(localStorageKey));
+        }
+        // Initialiser le sélecteur de langue et l'extension de fichier à l'état actuel.
+        changeModeAndExtension();  // Appel après chargement pour régler l'extension initiale
+    };
+
+    // Sauvegardez le code dans localStorage chaque fois qu'il change
+    editor.on("change", function() {
+        localStorage.setItem(localStorageKey, editor.getValue());
+    });
+
+    function changeModeAndExtension() {
+        // Prend la valeur actuelle du sélecteur pour éviter des problèmes lors du chargement initial
+        var selection = document.getElementById("languageSelector").value.split('|');
+        var mode = selection[0];
+        var extension = selection[1];
+        editor.setOption("mode", mode);
+        document.getElementById("fileName").value = "saved_code" + extension;
+    }
+
+    function saveCode() {
+        var code = editor.getValue();
+        var fileName = document.getElementById("fileName").value;
+        var blob = new Blob([code], {type: "text/plain;charset=utf-8"});
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
