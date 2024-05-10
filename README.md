@@ -8,12 +8,14 @@ Welcome to NiceCode, a simple web-based code editor designed to simplify and enh
 - **Persistent Local Storage**: Your code is saved in your browser's local storage, so you never lose your work.
 - **Customizable Themes**: Comes with the Lucario theme for better code visibility and aesthetics.
 - **Download Code**: Easily save your work to a file with the correct file extension.
+- **Timestamped Backups**: Save versions of your files with timestamps, ideal for tracking changes and maintaining backups.
 
 ## How to Use
 
 1. **Choose Language**: Select your programming language from the dropdown to set the appropriate syntax highlighting.
 2. **Code**: Type your code in the editor. Your changes are automatically saved to local storage.
-3. **Save Your Work**: Click the 'Save Code' button to download your code with the right extension.
+3. **Save Your Work**: Click the 'Save' button to download your code with the right extension.
+4. **Backup with Timestamp**: Use the 'Backup' button to save your current work with a timestamp in the filename, ensuring you have a versioned backup.
 
 ## Installation
 
