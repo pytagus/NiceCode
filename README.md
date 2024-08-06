@@ -9,6 +9,7 @@ Welcome to NiceCode, a simple web-based code editor designed to simplify and enh
 - **Customizable Themes**: Comes with the Lucario theme for better code visibility and aesthetics.
 - **Download Code**: Easily save your work to a file with the correct file extension.
 - **Timestamped Backups**: Save versions of your files with timestamps, ideal for tracking changes and maintaining backups.
+- **Auto Fonction Detection
 
 ## How to Use
 
