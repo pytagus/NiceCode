@@ -1,100 +1,206 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>NiceCode</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <style>
-        .CodeMirror {
-            height: 680px; 
-            font-size: 14px; 
-            border: 1px solid #2986cc;
-        }
-        h1 {
-            color: #2986cc;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/lucario.min.css">
-</head>
-<body>
-    <h1>N i c e C o d e</h1>
-    <select id="languageSelector" onchange="changeModeAndExtension()">
-        <option value="htmlmixed|.html">HTML</option>
-        <option value="javascript|.js">JavaScript</option>
-        <option value="python|.py">Python</option>
-        <option value="php|.php">PHP</option>
-        <option value="css|.css">CSS</option>
-    </select>
-    <input type="text" id="fileName" placeholder="Nom du fichier" value="saved_code">
-    <button onclick="saveCode()">Save</button>
-    <button onclick="saveBackupCode()">Backup</button>
-  	<textarea id="myCodeEditor"></textarea>
-<script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("myCodeEditor"), {
-        lineNumbers: true,
-        mode: "htmlmixed",
-        theme: "lucario"
-    });
+    <head>
+        <meta charset="UTF-8" />
+        <title>NiceCode</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css"
+        />
+        <style>
+            .CodeMirror {
+                height: 680px;
+                font-size: 14px;
+                border: 1px solid #2986cc;
+            }
+            h1 {
+                color: #2986cc;
+            }
+            #functionsList {
+                width: 220px;
+                float: right;
+                border-left: 1px solid #2986cc;
+                border-right: 1px solid #2986cc;
+                border-bottom: 1px solid #2986cc;
+                border-top: 1px solid #2986cc;
+                height: 680px;
+                overflow-y: auto;
+                padding: 10px;
+                box-sizing: border-box;
+                margin-left: 10px;
+            }
+            #editorWrapper {
+                overflow: hidden;
+                display: flex;
+            }
+            #functionsList div {
+                margin-bottom: 10px;
+                padding: 5px;
+                border-radius: 3px;
+                background-color: #f1f1f1;
+            }
+            #functionsList div:hover {
+                background-color: #e1e1e1;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/lucario.min.css"
+        />
+    </head>
+    <body>
+        <h1>N i c e C o d e</h1>
+        <select id="languageSelector" onchange="changeModeAndExtension()">
+            <option value="htmlmixed|.html">HTML</option>
+            <option value="javascript|.js">JavaScript</option>
+            <option value="python|.py">Python</option>
+            <option value="php|.php">PHP</option>
+            <option value="css|.css">CSS</option>
+        </select>
+        <input
+            type="text"
+            id="fileName"
+            placeholder="Nom du fichier"
+            value="code"
+        />
+        <button onclick="saveCode()">Save</button>
+        <button onclick="saveBackupCode()">Backup</button>
+      	<div id="editorWrapper">
+            <textarea id="myCodeEditor"></textarea>
+            <div id="functionsList"></div>
+        </div>
+        <script>
+            var editor = CodeMirror.fromTextArea(
+                document.getElementById("myCodeEditor"),
+                {
+                    lineNumbers: true,
+                    mode: "htmlmixed",
+                    theme: "lucario",
+                },
+            );
 
-    var localStorageKey = "NiceCodeEditor_code";
+            var localStorageKey = "NiceCodeEditor_code";
 
-    window.onload = function() {
-        if (localStorage.getItem(localStorageKey)) {
-            editor.setValue(localStorage.getItem(localStorageKey));
-        }
-        changeModeAndExtension();
-    };
+            window.onload = function () {
+                if (localStorage.getItem(localStorageKey)) {
+                    editor.setValue(localStorage.getItem(localStorageKey));
+                }
+                changeModeAndExtension();
+            };
 
-    editor.on("change", function() {
-        localStorage.setItem(localStorageKey, editor.getValue());
-    });
+            editor.on("change", function () {
+                localStorage.setItem(localStorageKey, editor.getValue());
+                updateFunctionList();
+            });
 
-    function changeModeAndExtension() {
-        var selection = document.getElementById("languageSelector").value.split('|');
-        var mode = selection[0];
-        var extension = selection[1];
-        editor.setOption("mode", mode);
-        document.getElementById("fileName").value = "saved_code" + extension;
-    }
+            function changeModeAndExtension() {
+                var selection = document
+                    .getElementById("languageSelector")
+                    .value.split("|");
+                var mode = selection[0];
+                var extension = selection[1];
+                editor.setOption("mode", mode);
+                document.getElementById("fileName").value =
+                    "code" + extension;
+                updateFunctionList();
+            }
 
-    function saveCode() {
-        var code = editor.getValue();
-        var fileName = document.getElementById("fileName").value;
-        downloadFile(code, fileName);
-    }
+            function updateFunctionList() {
+                var code = editor.getValue();
+                var functionListElement = document.getElementById("functionsList");
+                functionListElement.innerHTML = "";
+                var functions = findFunctions(code);
+                functions.forEach(function (func) {
+                    var funcElement = document.createElement("div");
+                    funcElement.textContent = func.name;
+                    funcElement.style.cursor = "pointer";
+                    funcElement.onclick = function () {
+                        var topPosition = editor.charCoords({line: func.line, ch: 0}, "local").top;
+                        editor.scrollTo(null, topPosition - editor.defaultTextHeight());
+                        editor.setCursor({ line: func.line, ch: 0 });
+                        editor.focus();
+                    };
+                    functionListElement.appendChild(funcElement);
+                });
+            }
 
-    function saveBackupCode() {
-        var code = editor.getValue();
-        var baseName = document.getElementById("fileName").value;
-        var date = new Date();
-        var timestamp = date.getFullYear().toString() +
-                        ('0' + (date.getMonth() + 1)).slice(-2) +
-                        ('0' + date.getDate()).slice(-2) + '_' +
-                        ('0' + date.getHours()).slice(-2) +
-                        ('0' + date.getMinutes()).slice(-2) +
-                        ('0' + date.getSeconds()).slice(-2);
-        var fileName = baseName.replace(/(\.[^\.]+)$/, '-' + timestamp + '$1');
-        downloadFile(code, fileName);
-    }
+            function findFunctions(code) {
+                var functions = [];
+                var lines = code.split("\n");
+                var mode = editor.getOption("mode");
 
-    function downloadFile(code, fileName) {
-        var blob = new Blob([code], {type: "text/plain;charset=utf-8"});
-        var url = window.URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }
-</script>
-</body>
+                var regex;
+                if (mode === "javascript" || mode === "htmlmixed") {
+                    regex =
+                        /function\s+([a-zA-Z0-9_]+)\s*\(|([a-zA-Z0-9_]+)\s*=\s*function\s*\(/g;
+                } else if (mode === "python") {
+                    regex = /def\s+([a-zA-Z0-9_]+)\s*\(/g;
+                } else if (mode === "php") {
+                    regex = /function\s+([a-zA-Z0-9_]+)\s*\(/g;
+                } else if (mode === "css") {
+                    regex = /([a-zA-Z0-9_-]+)\s*\{/g;
+                }
+
+                if (regex) {
+                    for (var i = 0; i < lines.length; i++) {
+                        var match;
+                        while ((match = regex.exec(lines[i])) !== null) {
+                            functions.push({
+                                name: match[1] || match[2],
+                                line: i,
+                            });
+                        }
+                    }
+                }
+
+                return functions;
+            }
+
+            function saveCode() {
+                var code = editor.getValue();
+                var fileName = document.getElementById("fileName").value;
+                downloadFile(code, fileName);
+            }
+
+            function saveBackupCode() {
+                var code = editor.getValue();
+                var baseName = document.getElementById("fileName").value;
+                var date = new Date();
+                var timestamp =
+                    date.getFullYear().toString() +
+                    ("0" + (date.getMonth() + 1)).slice(-2) +
+                    ("0" + date.getDate()).slice(-2) +
+                    "_" +
+                    ("0" + date.getHours()).slice(-2) +
+                    ("0" + date.getMinutes()).slice(-2) +
+                    ("0" + date.getSeconds()).slice(-2);
+                var fileName = baseName.replace(
+                    /(\.[^\.]+)$/,
+                    "-" + timestamp + "$1",
+                );
+                downloadFile(code, fileName);
+            }
+
+            function downloadFile(code, fileName) {
+                var blob = new Blob([code], {
+                    type: "text/plain;charset=utf-8",
+                });
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }
+        </script>
+    </body>
 </html>
