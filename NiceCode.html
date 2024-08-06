@@ -12,6 +12,7 @@
                 height: 680px;
                 font-size: 14px;
                 border: 1px solid #2986cc;
+                min-width: 400px; /* Largeur minimale */
             }
             h1 {
                 color: #2986cc;
@@ -83,7 +84,10 @@
                     lineNumbers: true,
                     mode: "htmlmixed",
                     theme: "lucario",
-                },
+                    smartIndent: true, // Active l'indentation intelligente
+                    tabSize: 4, // Définit la taille de la tabulation à 4 espaces
+                    indentUnit: 4, // Définit l'unité d'indentation à 4 espaces
+                }
             );
 
             var localStorageKey = "NiceCodeEditor_code";
@@ -94,8 +98,40 @@
                 }
                 changeModeAndExtension();
             };
+            
+            
+            editor.on("paste", function(instance, event) {
+                var cursorPos = editor.getCursor();
+                setTimeout(function() {
+                    var from = cursorPos;
+                    var to = editor.getCursor();
+                    var text = editor.getRange(from, to);
+                    var lines = text.split("\n");
+            
+                    // Récupération de l'indentation de la ligne de départ
+                    var baseIndent = instance.getLine(from.line).match(/^\s*/)[0];
+                    var firstLineIndentLength = lines[0].match(/^\s*/)[0].length;
+            
+                    // Calcul de l'indentation relative des lignes collées
+                    var adjustedLines = lines.map(function(line, index) {
+                        var currentLineIndentLength = line.match(/^\s*/)[0].length;
+                        var relativeIndent = currentLineIndentLength - firstLineIndentLength;
+            
+                        if (index === 0) {
+                            // Ne pas modifier l'indentation de la première ligne
+                            return line;
+                        }
+                        // Appliquer baseIndent + indentation relative (ou rien si relativeIndent est négatif)
+                        return baseIndent + " ".repeat(Math.max(0, relativeIndent)) + line.trim();
+                    });
+            
+                    // Remplacer le texte collé avec les lignes correctement indentées
+                    instance.replaceRange(adjustedLines.join("\n"), from, to);
+                }, 0);
+            });
 
-            editor.on("change", function () {
+            // Gestionnaire pour l'événement 'change' pour d'autres changements
+            editor.on("change", function(instance, changeObj) {
                 localStorage.setItem(localStorageKey, editor.getValue());
                 updateFunctionList();
             });
