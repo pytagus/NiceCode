@@ -12,7 +12,7 @@
                 height: 680px;
                 font-size: 14px;
                 border: 1px solid #2986cc;
-                min-width: 400px; /* Largeur minimale */
+                min-width: 600px; /* Largeur minimale */
             }
             h1 {
                 color: #2986cc;
@@ -43,6 +43,21 @@
             #functionsList div:hover {
                 background-color: #e1e1e1;
             }
+            /* Style pour la sélection de texte */
+            .CodeMirror-selected {
+                background-color: rgba(66, 135, 245, 0.3) !important;
+            }
+            
+            /* Style pour la surbrillance de recherche */
+            .cm-searching {
+                background-color: rgba(71, 154, 255, 0.4) !important;
+                outline: 1px solid #ff9d47;
+            }
+            
+            /* Style pour le résultat de recherche actuellement sélectionné */
+            .CodeMirror-focused .CodeMirror-selected {
+                background-color: rgba(40, 135, 250, 0.5) !important;
+            }
         </style>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
@@ -51,6 +66,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/search.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/searchcursor.min.js"></script>
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/lucario.min.css"
@@ -73,6 +90,10 @@
         />
         <button onclick="saveCode()">Save</button>
         <button onclick="saveBackupCode()">Backup</button>
+        <input type="text" id="searchField" placeholder="Rechercher...">
+        <button id="searchButton">Rechercher</button>
+        <span id="searchCount"></span>
+        <button id="nextButton">Suivant</button>
       	<div id="editorWrapper">
             <textarea id="myCodeEditor"></textarea>
             <div id="functionsList"></div>
@@ -87,6 +108,7 @@
                     smartIndent: true, // Active l'indentation intelligente
                     tabSize: 4, // Définit la taille de la tabulation à 4 espaces
                     indentUnit: 4, // Définit l'unité d'indentation à 4 espaces
+                    styleSelectedText: true,
                 }
             );
 
@@ -146,6 +168,16 @@
                 document.getElementById("fileName").value =
                     "code" + extension;
                 updateFunctionList();
+            }
+            
+            function updateSearchCount() {
+                var count = searchMarkers.length;
+                var countElement = document.getElementById('searchCount');
+                if (count > 0) {
+                    countElement.textContent = `${currentMarkerIndex + 1} / ${count}`;
+                } else {
+                    countElement.textContent = '';
+                }
             }
 
             function updateFunctionList() {
@@ -237,6 +269,81 @@
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
             }
+            
+            var searchField = document.getElementById('searchField');
+            var searchButton = document.getElementById('searchButton');
+            var nextButton = document.getElementById('nextButton');
+            var searchCount = document.getElementById('searchCount');
+            
+            var currentMatch = null;
+            var matches = [];
+            var currentMatchIndex = -1;
+            
+            function performSearch() {
+                clearSearch();
+                var query = searchField.value;
+                if (!query) return;
+            
+                var cursor = editor.getSearchCursor(query);
+                while (cursor.findNext()) {
+                    matches.push({
+                        from: cursor.from(),
+                        to: cursor.to()
+                    });
+                }
+            
+                if (matches.length > 0) {
+                    currentMatchIndex = 0;
+                    highlightMatch(0);
+                    updateSearchCount();
+                } else {
+                    searchCount.textContent = "Aucune occurrence trouvée";
+                }
+            }
+            
+            function findNext() {
+                if (matches.length === 0) return;
+            
+                currentMatchIndex = (currentMatchIndex + 1) % matches.length;
+                highlightMatch(currentMatchIndex);
+                updateSearchCount();
+            }
+            
+            function highlightMatch(index) {
+                if (currentMatch) {
+                    currentMatch.clear();
+                }
+            
+                var match = matches[index];
+                currentMatch = editor.markText(match.from, match.to, {className: 'cm-searching'});
+                editor.setSelection(match.from, match.to);
+                editor.scrollIntoView({from: match.from, to: match.to}, 20);
+            }
+            
+            function clearSearch() {
+                if (currentMatch) {
+                    currentMatch.clear();
+                }
+                matches = [];
+                currentMatchIndex = -1;
+                searchCount.textContent = "";
+            }
+            
+            function updateSearchCount() {
+                if (matches.length > 0) {
+                    searchCount.textContent = `${currentMatchIndex + 1} / ${matches.length}`;
+                } else {
+                    searchCount.textContent = "";
+                }
+            }
+            
+            searchButton.addEventListener('click', performSearch);
+            nextButton.addEventListener('click', findNext);
+            searchField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
         </script>
     </body>
 </html>
