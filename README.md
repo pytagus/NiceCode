@@ -16,10 +16,7 @@ Welcome to NiceCode, a simple web-based code editor designed to simplify and enh
 
 ## Installation
 
-To set up NiceCode on your local machine:
-
-1. Clone this repository: git clone https://github.com/yourusername/NiceCode.git
-2. Open `index.html` in your browser.
+2. Open `NiceCode.html` in your browser.
 
 ## Contributing
 
