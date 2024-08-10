@@ -11,6 +11,7 @@ Welcome to NiceCode, a simple web-based code editor designed to simplify and enh
 - **Timestamped Backups**: Save versions of your files with timestamps, ideal for tracking changes and maintaining backups.
 - **Automatic Function Detection**: Automatically detects and lists functions in the code for easy navigation.
 - **Drag and Drop**  Drag and Drop your code when the editor is empty.
+- **Search and Next Highlighting**
 - **Perfect Copy-Paste Indentation**: Maintains the correct indentation when copying and pasting code into the editor.
 
 ## Installation
