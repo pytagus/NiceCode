@@ -108,6 +108,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/search.min.js"></script>
@@ -226,28 +227,6 @@
                 }
                 updateFunctionList();
             });
-
-            function changeModeAndExtension() {
-                var selection = document
-                    .getElementById("languageSelector")
-                    .value.split("|");
-                var mode = selection[0];
-                var extension = selection[1];
-                editor.setOption("mode", mode);
-                document.getElementById("fileName").value =
-                    "code" + extension;
-                updateFunctionList();
-            }
-            
-            function updateSearchCount() {
-                var count = searchMarkers.length;
-                var countElement = document.getElementById('searchCount');
-                if (count > 0) {
-                    countElement.textContent = `${currentMarkerIndex + 1} / ${count}`;
-                } else {
-                    countElement.textContent = '';
-                }
-            }
 
             function updateFunctionList() {
                 var code = editor.getValue();
@@ -426,15 +405,6 @@
                 
                 updateTabsUI();
                 saveToLocalStorage();
-            }
-            
-            function detectCodeType(content) {
-                if (content.includes('<?php')) return 'php';
-                if (content.includes('<!DOCTYPE html>') || content.includes('<html')) return 'htmlmixed';
-                if (content.includes('def ') && content.includes(':')) return 'python';
-                if (content.includes('function') || content.includes('=>')) return 'javascript';
-                if (content.includes('{') && content.includes('}') && content.includes(':')) return 'css';
-                return 'htmlmixed'; // default
             }
             
             function updateTabsUI() {
