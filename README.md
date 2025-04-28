@@ -6,7 +6,7 @@ Welcome to NiceCode, a versatile web-based code editor designed to streamline an
 
 ## Features
 
-- **Multiple Language Support**: Code in HTML, JavaScript, Python, PHP, and CSS.
+- **Multiple Language Support**: Code in HTML, JavaScript, Python, PHP, Golang and CSS.
 - **Persistent Local Storage**: Your code is automatically saved in your browser's local storage, ensuring you never lose your work.
 - **Multi-Tab Interface**: Work on multiple files simultaneously with a tabbed interface.
 - **Drag and Drop File Loading**: Easily open files by dragging and dropping them into the editor.
