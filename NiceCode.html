@@ -165,6 +165,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
@@ -185,6 +186,7 @@
             <option value="python|.py">Python</option>
             <option value="php|.php">PHP</option>
             <option value="css|.css">CSS</option>
+            <option value="go|.go">Go</option>
         </select>
         <input
             type="text"
@@ -395,6 +397,7 @@
                 if (content.includes('def ') && content.includes(':')) return 'python';
                 if (content.includes('function') || content.includes('=>')) return 'javascript';
                 if (content.includes('{') && content.includes('}') && content.includes(':')) return 'css';
+                if (content.includes('package ') && (content.includes('func ') || content.includes('import '))) return 'go';
                 return 'htmlmixed'; // default
             }
             
@@ -405,6 +408,7 @@
                     case '.php': return 'php';
                     case '.css': return 'css';
                     case '.html': return 'htmlmixed';
+                    case '.go': return 'go';
                     default: return 'text';
                 }
             }
@@ -415,6 +419,7 @@
                     case 'python': return '.py';
                     case 'php': return '.php';
                     case 'css': return '.css';
+                    case 'go': return '.go';
                     default: return '.html';
                 }
             }
